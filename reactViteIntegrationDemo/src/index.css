@@ -1,15 +1,31 @@
+/**
+ * 贝塔眼镜 - AR虚拟试戴样式
+ * Beta Glasses VTO Styles
+ * 贝塔科技 © 2026
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
+
 :root {
   --primary: #2563eb;
   --primary-dark: #1d4ed8;
+  --primary-light: #3b82f6;
   --accent: #f59e0b;
   --accent-hover: #f97316;
+  --success: #10b981;
+  --error: #ef4444;
   --bg-dark: #0f172a;
   --bg-gradient: linear-gradient(135deg, #1e3a8a 0%, #3730a3 50%, #1e40af 100%);
   --glass-bg: rgba(255, 255, 255, 0.1);
+  --glass-bg-hover: rgba(255, 255, 255, 0.15);
   --glass-border: rgba(255, 255, 255, 0.2);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
   --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.4);
   --radius: 16px;
   --radius-sm: 12px;
+  --radius-xs: 8px;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 * {
@@ -18,36 +34,102 @@
   box-sizing: border-box;
 }
 
-html {
-  text-align: center;
-  overflow: hidden;
-  background: var(--bg-gradient);
-  min-height: 100vh;
+html, body, #root {
+  height: 100%;
+  width: 100%;
 }
 
 body {
-  width: 100vw;
-  min-height: 100vh;
   font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg-gradient);
   color: white;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* 试戴容器 */
-.BetaVTOWidget,
-.JeelizVTOWidget {
-  width: 100vw;
-  height: 100vh;
-  max-width: 100vh;
-  max-height: 100vw;
-  margin-left: auto;
-  margin-right: auto;
+/* App Container */
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+.app.fullscreen {
+  background: #000;
+}
+
+.app-main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* Header */
+.app-header {
+  height: 64px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--glass-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--bg-dark);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+
+.brand-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  background: linear-gradient(90deg, #fff 0%, #e0e7ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 2px;
+}
+
+.brand-badge {
+  font-size: 0.75rem;
+  padding: 4px 10px;
+  background: var(--accent);
+  color: var(--bg-dark);
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+/* VTO Container */
+.vto-container {
+  width: 100%;
+  height: 100%;
+  max-width: min(100vh, 800px);
+  max-height: 100%;
   position: relative;
   border-radius: var(--radius);
   overflow: hidden;
 }
 
-.BetaVTOWidgetCanvas,
-.JeelizVTOWidgetCanvas {
+.vto-canvas {
   position: absolute;
   z-index: 1;
   left: 0;
@@ -56,105 +138,131 @@ body {
   border-radius: var(--radius);
 }
 
-/* 控制栏 */
-.BetaVTOWidgetControls,
-.JeelizVTOWidgetControls {
-  position: absolute;
-  z-index: 10;
-  width: 100%;
-  top: 16px;
-  display: flex;
-  justify-content: center;
-  padding: 0 16px;
-}
-
-/* 按钮 */
-.BetaVTOWidgetButton,
-.JeelizVTOWidgetButton {
+/* Buttons */
+.btn {
   cursor: pointer;
   background: var(--glass-bg);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   color: white;
+  font-family: inherit;
   font-weight: 500;
   font-size: 14px;
-  padding: 12px 24px;
-  min-width: 120px;
+  padding: 12px 20px;
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-sm);
-  margin: 8px;
-  transition: all 0.3s ease;
+  transition: var(--transition);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
+  white-space: nowrap;
 }
 
-.BetaVTOWidgetButton:hover,
-.JeelizVTOWidgetButton:hover {
-  background: rgba(255, 255, 255, 0.2);
+.btn:hover {
+  background: var(--glass-bg-hover);
   transform: translateY(-2px);
   box-shadow: var(--shadow);
 }
 
-.BetaVTOWidgetButton:active,
-.JeelizVTOWidgetButton:active {
+.btn:active {
   transform: translateY(0);
 }
 
-.BetaVTOWidgetAdjustEnterButton,
-.JeelizVTOWidgetAdjustEnterButton {
+.btn-primary {
   background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
   border: none;
 }
 
-.BetaVTOWidgetAdjustEnterButton:hover,
-.JeelizVTOWidgetAdjustEnterButton:hover {
-  background: linear-gradient(135deg, var(--primary-dark) 0%, #1e3a8a 100%);
+.btn-primary:hover {
+  background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
 }
 
-/* 调整模式提示 */
-.BetaVTOWidgetAdjustNotice,
-.JeelizVTOWidgetAdjustNotice {
-  width: 100%;
-  position: absolute;
-  background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.85) 100%);
-  color: white;
-  z-index: 20;
-  font-size: 16px;
-  bottom: 0;
-  justify-content: center;
-  padding: 48px 20px 24px;
-  display: none;
-  text-align: center;
-}
-
-.BetaVTOWidgetAdjustNotice p,
-.JeelizVTOWidgetAdjustNotice p {
-  margin-bottom: 16px;
-  font-size: 15px;
-  opacity: 0.9;
-}
-
-.BetaVTOWidgetAdjustExitButton,
-.JeelizVTOWidgetAdjustExitButton {
+.btn-accent {
   background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
   color: var(--bg-dark);
   border: none;
   font-weight: 600;
 }
 
-.BetaVTOWidgetAdjustExitButton:hover,
-.JeelizVTOWidgetAdjustExitButton:hover {
+.btn-accent:hover {
   background: linear-gradient(135deg, var(--accent-hover) 0%, #ea580c 100%);
 }
 
-/* 加载动画 */
-.BetaVTOWidgetLoading,
-.JeelizVTOWidgetLoading {
+/* Model Button */
+.model-btn {
+  min-width: 90px;
+  font-size: 13px;
+  background: linear-gradient(135deg, var(--model-color, var(--primary)) 0%, color-mix(in srgb, var(--model-color, var(--primary)) 80%, black) 100%);
+  border: none;
+  opacity: 0.7;
+}
+
+.model-btn:hover,
+.model-btn.active {
+  opacity: 1;
+}
+
+.model-btn.active {
+  box-shadow: 0 0 0 2px white, var(--shadow);
+}
+
+/* Controls */
+.controls-top,
+.controls-bottom {
+  position: absolute;
+  z-index: 10;
+  left: 16px;
+  right: 16px;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.controls-top {
+  top: 16px;
+}
+
+.controls-bottom {
+  bottom: 16px;
+  gap: 8px;
+}
+
+/* Adjust Overlay */
+.adjust-overlay {
+  position: absolute;
+  z-index: 20;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.85) 100%);
+  padding: 48px 20px 24px;
+  text-align: center;
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.adjust-content p {
+  margin-bottom: 16px;
+  font-size: 15px;
+  opacity: 0.9;
+}
+
+/* Loading Overlay */
+.loading-overlay {
   position: fixed;
   z-index: 1000;
-  cursor: wait;
   top: 0;
   left: 0;
   width: 100vw;
@@ -166,95 +274,145 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  animation: fadeIn 0.3s ease-out;
 }
 
-.BetaVTOWidgetLoadingText,
-.JeelizVTOWidgetLoadingText {
-  color: white;
-  font-size: 20px;
-  font-weight: 500;
-  letter-spacing: 4px;
-  margin-top: 24px;
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-.BetaVTOWidgetLoadingText::before,
-.JeelizVTOWidgetLoadingText::before {
-  content: '';
-  display: block;
-  width: 50px;
-  height: 50px;
-  border: 3px solid var(--glass-border);
+.loading-spinner {
+  width: 60px;
+  height: 60px;
+  border: 4px solid var(--glass-border);
   border-top-color: var(--accent);
   border-radius: 50%;
   animation: spin 1s linear infinite;
-  margin: 0 auto 20px;
+  margin-bottom: 24px;
 }
 
 @keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
+  to { transform: rotate(360deg); }
 }
 
-/* 模型切换 */
-.BetaVTOWidgetChangeModelContainer,
-.JeelizVTOWidgetChangeModelContainer {
-  bottom: 16px;
-  top: auto;
+.loading-text {
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+
+.loading-sub {
+  font-size: 14px;
+  opacity: 0.6;
+}
+
+/* Error Overlay */
+.error-overlay {
+  position: fixed;
+  z-index: 1000;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(20px);
   display: flex;
-  flex-wrap: wrap;
+  align-items: center;
   justify-content: center;
-  gap: 4px;
 }
 
-.BetaVTOWidgetChangeModelContainer .BetaVTOWidgetButton,
-.JeelizVTOWidgetChangeModelContainer .JeelizVTOWidgetButton {
-  min-width: 90px;
-  padding: 10px 16px;
-  font-size: 13px;
+.error-content {
+  text-align: center;
+  padding: 32px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  max-width: 400px;
 }
 
-.BetaVTOWidgetChangeModelContainer .BetaVTOWidgetButton:nth-child(1),
-.JeelizVTOWidgetChangeModelContainer .JeelizVTOWidgetButton:nth-child(1) {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+.error-icon {
+  font-size: 48px;
+  display: block;
+  margin-bottom: 16px;
+}
+
+.error-content p {
+  margin-bottom: 24px;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.error-content button {
+  background: var(--error);
+  color: white;
   border: none;
+  padding: 12px 24px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
 }
 
-.BetaVTOWidgetChangeModelContainer .BetaVTOWidgetButton:nth-child(2),
-.JeelizVTOWidgetChangeModelContainer .JeelizVTOWidgetButton:nth-child(2) {
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-  border: none;
+.error-content button:hover {
+  background: #dc2626;
 }
 
-.BetaVTOWidgetChangeModelContainer .BetaVTOWidgetButton:nth-child(3),
-.JeelizVTOWidgetChangeModelContainer .JeelizVTOWidgetButton:nth-child(3) {
-  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
-  border: none;
-}
-
-/* 响应式 */
+/* Responsive */
 @media (max-width: 640px) {
-  .BetaVTOWidgetButton,
-  .JeelizVTOWidgetButton {
+  .app-header {
+    height: 56px;
+  }
+
+  .brand-title {
+    font-size: 1.2rem;
+  }
+
+  .brand-badge {
+    display: none;
+  }
+
+  .btn {
     padding: 10px 16px;
-    min-width: 100px;
     font-size: 13px;
   }
 
-  .BetaVTOWidgetChangeModelContainer .BetaVTOWidgetButton,
-  .JeelizVTOWidgetChangeModelContainer .JeelizVTOWidgetButton {
+  .model-btn {
     min-width: 80px;
     padding: 8px 12px;
   }
 
-  .BetaVTOWidgetControls,
-  .JeelizVTOWidgetControls {
-    top: 12px;
-    padding: 0 8px;
+  .controls-top,
+  .controls-bottom {
+    left: 8px;
+    right: 8px;
   }
 
-  .BetaVTOWidgetChangeModelContainer,
-  .JeelizVTOWidgetChangeModelContainer {
+  .controls-top {
+    top: 12px;
+  }
+
+  .controls-bottom {
     bottom: 12px;
   }
+}
+
+/* Legacy class compatibility */
+.JeelizVTOWidget,
+.BetaVTOWidget {
+  width: 100%;
+  height: 100%;
+  max-width: min(100vh, 800px);
+  position: relative;
+}
+
+.JeelizVTOWidgetCanvas,
+.BetaVTOWidgetCanvas {
+  position: absolute;
+  z-index: 1;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
 }

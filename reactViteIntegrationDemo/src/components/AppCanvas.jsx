@@ -1,85 +1,68 @@
-import { useRef, useEffect, useCallback } from 'react'
+import { useRef, useEffect, useCallback, useState } from 'react'
 import { JEELIZVTOWIDGET } from 'jeelizvtowidget'
 
 import searchImage from '../assets/target512.jpg'
 
 // 眼镜款式配置
 const GLASSES_MODELS = [
-  { id: 1, sku: 'rayban_aviator_or_vertFlash', name: '经典飞行员' },
-  { id: 2, sku: 'rayban_round_cuivre_pinkBrownDegrade', name: '复古圆框' },
-  { id: 3, sku: 'carrera_113S_blue', name: '时尚蓝调' },
+  { id: 1, sku: 'rayban_aviator_or_vertFlash', name: '经典飞行员', color: '#10b981' },
+  { id: 2, sku: 'rayban_round_cuivre_pinkBrownDegrade', name: '复古圆框', color: '#2563eb' },
+  { id: 3, sku: 'carrera_113S_blue', name: '时尚蓝调', color: '#8b5cf6' },
 ]
 
-function initVTOWidget(placeHolder, canvas, toggleLoading) {
+function initVTOWidget(placeHolder, canvas, callbacks) {
   JEELIZVTOWIDGET.start({
     placeHolder,
     canvas,
     callbacks: {
-      ADJUST_START: null,
-      ADJUST_END: null,
-      LOADING_START: toggleLoading.bind(null, true),
-      LOADING_END: toggleLoading.bind(null, false),
+      ADJUST_START: callbacks.onAdjustStart,
+      ADJUST_END: callbacks.onAdjustEnd,
+      LOADING_START: () => callbacks.setLoading(true),
+      LOADING_END: () => callbacks.setLoading(false),
     },
     sku: 'empty',
     searchImageMask: searchImage,
-    searchImageColor: 0xf59e0b, // 贝塔品牌色
+    searchImageColor: 0xf59e0b,
     searchImageRotationSpeed: -0.001,
-    callbackReady: function () {
+    callbackReady: () => {
       console.log('✨ 贝塔眼镜试戴组件已就绪')
+      callbacks.onReady?.()
     },
-    onError: function (errorLabel) {
-      let message = '发生错误'
-      switch (errorLabel) {
-        case 'WEBCAM_UNAVAILABLE':
-          message = '无法访问摄像头，请检查权限设置'
-          break
-        case 'INVALID_SKU':
-          message = '无效的眼镜型号'
-          break
-        case 'PLACEHOLDER_NULL_WIDTH':
-        case 'PLACEHOLDER_NULL_HEIGHT':
-          message = '界面加载异常，请刷新页面'
-          break
-        case 'FATAL':
-        default:
-          message = '系统错误，请稍后重试'
-          break
+    onError: (errorLabel) => {
+      const messages = {
+        'WEBCAM_UNAVAILABLE': '无法访问摄像头，请检查权限设置',
+        'INVALID_SKU': '无效的眼镜型号',
+        'PLACEHOLDER_NULL_WIDTH': '界面加载异常，请刷新页面',
+        'PLACEHOLDER_NULL_HEIGHT': '界面加载异常，请刷新页面',
+        'FATAL': '系统错误，请稍后重试',
       }
-      alert(message)
+      callbacks.onError?.(messages[errorLabel] || '发生未知错误')
     },
   })
 }
 
-function AppCanvas() {
+function AppCanvas({ onToggleFullscreen, isFullscreen }) {
   const refPlaceHolder = useRef()
   const refCanvas = useRef()
-  const refAdjustEnter = useRef()
-  const refAdjust = useRef()
-  const refChangeModel = useRef()
-  const refLoading = useRef()
+  
+  const [isLoading, setIsLoading] = useState(true)
+  const [isAdjusting, setIsAdjusting] = useState(false)
+  const [currentModel, setCurrentModel] = useState(null)
+  const [error, setError] = useState(null)
 
-  const toggleLoading = useCallback((isLoadingVisible) => {
-    if (refLoading.current) {
-      refLoading.current.style.display = isLoadingVisible ? 'flex' : 'none'
-    }
+  const handleModelSelect = useCallback((model) => {
+    setCurrentModel(model.id)
+    JEELIZVTOWIDGET.load(model.sku)
   }, [])
 
   const enterAdjustMode = useCallback(() => {
     JEELIZVTOWIDGET.enter_adjustMode()
-    if (refAdjustEnter.current) refAdjustEnter.current.style.display = 'none'
-    if (refAdjust.current) refAdjust.current.style.display = 'block'
-    if (refChangeModel.current) refChangeModel.current.style.display = 'none'
+    setIsAdjusting(true)
   }, [])
 
   const exitAdjustMode = useCallback(() => {
     JEELIZVTOWIDGET.exit_adjustMode()
-    if (refAdjustEnter.current) refAdjustEnter.current.style.display = 'flex'
-    if (refAdjust.current) refAdjust.current.style.display = 'none'
-    if (refChangeModel.current) refChangeModel.current.style.display = 'flex'
-  }, [])
-
-  const setGlassesModel = useCallback((sku) => {
-    JEELIZVTOWIDGET.load(sku)
+    setIsAdjusting(false)
   }, [])
 
   useEffect(() => {
@@ -87,61 +70,89 @@ function AppCanvas() {
     const canvas = refCanvas.current
 
     if (placeHolder && canvas) {
-      initVTOWidget(placeHolder, canvas, toggleLoading)
+      initVTOWidget(placeHolder, canvas, {
+        setLoading,
+        onAdjustStart: () => setIsAdjusting(true),
+        onAdjustEnd: () => setIsAdjusting(false),
+        onReady: () => setIsLoading(false),
+        onError: (msg) => {
+          setError(msg)
+          setIsLoading(false)
+        },
+      })
     }
 
     return () => {
-      // 清理逻辑
       // JEELIZVTOWIDGET.destroy()
     }
-  }, [toggleLoading])
+  }, [])
 
   return (
-    <div ref={refPlaceHolder} className="BetaVTOWidget">
-      <canvas ref={refCanvas} className="BetaVTOWidgetCanvas" />
+    <div ref={refPlaceHolder} className="vto-container">
+      <canvas ref={refCanvas} className="vto-canvas" />
 
-      {/* 调整按钮 */}
-      <div ref={refAdjustEnter} className="BetaVTOWidgetControls">
-        <button
-          className="BetaVTOWidgetButton BetaVTOWidgetAdjustEnterButton"
-          onClick={enterAdjustMode}
-        >
-          <span>📐</span>
-          调整位置
-        </button>
-      </div>
+      {/* 错误提示 */}
+      {error && (
+        <div className="error-overlay">
+          <div className="error-content">
+            <span className="error-icon">⚠️</span>
+            <p>{error}</p>
+            <button onClick={() => window.location.reload()}>
+              重新加载
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* 顶部控制栏 */}
+      {!isAdjusting && !isLoading && (
+        <div className="controls-top">
+          <button className="btn btn-primary" onClick={enterAdjustMode}>
+            <span>📐</span> 调整位置
+          </button>
+          <button className="btn" onClick={onToggleFullscreen}>
+            <span>{isFullscreen ? '🔲' : '⛶'}</span> 
+            {isFullscreen ? '退出全屏' : '全屏模式'}
+          </button>
+        </div>
+      )}
 
       {/* 调整模式提示 */}
-      <div ref={refAdjust} className="BetaVTOWidgetAdjustNotice">
-        <p>👆 拖动眼镜调整到合适位置</p>
-        <button
-          className="BetaVTOWidgetButton BetaVTOWidgetAdjustExitButton"
-          onClick={exitAdjustMode}
-        >
-          ✓ 完成调整
-        </button>
-      </div>
+      {isAdjusting && (
+        <div className="adjust-overlay">
+          <div className="adjust-content">
+            <p>👆 拖动眼镜调整到合适位置</p>
+            <button className="btn btn-accent" onClick={exitAdjustMode}>
+              ✓ 完成调整
+            </button>
+          </div>
+        </div>
+      )}
 
-      {/* 款式选择 */}
-      <div
-        ref={refChangeModel}
-        className="BetaVTOWidgetControls BetaVTOWidgetChangeModelContainer"
-      >
-        {GLASSES_MODELS.map((model) => (
-          <button
-            key={model.id}
-            className="BetaVTOWidgetButton"
-            onClick={() => setGlassesModel(model.sku)}
-          >
-            {model.name}
-          </button>
-        ))}
-      </div>
+      {/* 底部款式选择 */}
+      {!isAdjusting && !isLoading && (
+        <div className="controls-bottom">
+          {GLASSES_MODELS.map((model) => (
+            <button
+              key={model.id}
+              className={`btn model-btn ${currentModel === model.id ? 'active' : ''}`}
+              onClick={() => handleModelSelect(model)}
+              style={{ '--model-color': model.color }}
+            >
+              {model.name}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* 加载动画 */}
-      <div ref={refLoading} className="BetaVTOWidgetLoading">
-        <div className="BetaVTOWidgetLoadingText">正在加载...</div>
-      </div>
+      {isLoading && (
+        <div className="loading-overlay">
+          <div className="loading-spinner"></div>
+          <p className="loading-text">正在加载...</p>
+          <p className="loading-sub">贝塔科技 · AR虚拟试戴</p>
+        </div>
+      )}
     </div>
   )
 }
