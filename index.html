@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <title>贝塔眼镜 - AR虚拟试戴</title>
+    <meta charset='utf-8' />
+    <meta name="description" content="贝塔科技 - 眼镜AR虚拟试戴平台">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no"/>
+    
+    <!-- 主脚本 -->
+    <script src='dist/JeelizVTOWidget.js'></script>
+
+    <!-- 图标库 -->
+    <script defer src="https://use.fontawesome.com/releases/v5.15.4/js/all.js"></script>
+
+    <!-- 字体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+      :root {
+        --primary: #2563eb;
+        --primary-dark: #1d4ed8;
+        --accent: #f59e0b;
+        --bg-dark: #0f172a;
+        --bg-gradient: linear-gradient(135deg, #1e3a8a 0%, #3730a3 50%, #1e40af 100%);
+        --glass-bg: rgba(255, 255, 255, 0.1);
+        --glass-border: rgba(255, 255, 255, 0.2);
+        --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        --radius: 16px;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html, body {
+        height: 100%;
+        font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+      }
+
+      body {
+        overflow: hidden;
+        background: var(--bg-gradient);
+        color: white;
+      }
+
+      .app-container {
+        height: 100%;
+        width: 100vw;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* 头部导航 */
+      .header {
+        width: 100%;
+        height: 64px;
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-bottom: 1px solid var(--glass-border);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        z-index: 100;
+      }
+
+      .header-content {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .logo {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, var(--accent) 0%, #f97316 100%);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+      }
+
+      .brand-name {
+        font-size: 1.5rem;
+        font-weight: 700;
+        background: linear-gradient(90deg, #fff 0%, #e0e7ff 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        letter-spacing: 2px;
+      }
+
+      .brand-tag {
+        font-size: 0.75rem;
+        padding: 4px 10px;
+        background: var(--accent);
+        color: var(--bg-dark);
+        border-radius: 20px;
+        font-weight: 500;
+        margin-left: 8px;
+      }
+
+      /* 试戴区域 */
+      #JeelizVTOWidget {
+        flex-grow: 1;
+        width: 100%;
+        max-width: min(100vh - 64px, 800px);
+        margin: 0 auto;
+        position: relative;
+        border-radius: var(--radius);
+        overflow: hidden;
+      }
+
+      #JeelizVTOWidgetCanvas {
+        position: absolute;
+        z-index: 1;
+        left: 0;
+        right: 0;
+        margin: 0 auto;
+        border-radius: var(--radius);
+      }
+
+      /* 按钮基础样式 */
+      .btn {
+        cursor: pointer;
+        background: var(--glass-bg);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        color: white;
+        font-weight: 500;
+        font-size: 14px;
+        padding: 12px 20px;
+        border: 1px solid var(--glass-border);
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow);
+      }
+
+      .btn:active {
+        transform: translateY(0);
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        border: none;
+      }
+
+      .btn-primary:hover {
+        background: linear-gradient(135deg, var(--primary-dark) 0%, #1e3a8a 100%);
+      }
+
+      .btn-accent {
+        background: linear-gradient(135deg, var(--accent) 0%, #f97316 100%);
+        color: var(--bg-dark);
+        border: none;
+      }
+
+      /* 控制栏 */
+      .controls-top {
+        position: absolute;
+        z-index: 10;
+        top: 16px;
+        left: 16px;
+        right: 16px;
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .controls-bottom {
+        position: absolute;
+        z-index: 10;
+        bottom: 16px;
+        left: 16px;
+        right: 16px;
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .model-btn {
+        min-width: 80px;
+        font-size: 13px;
+        padding: 10px 16px;
+      }
+
+      .model-btn.active {
+        background: linear-gradient(135deg, var(--accent) 0%, #f97316 100%);
+        color: var(--bg-dark);
+        border: none;
+      }
+
+      /* 调整模式提示 */
+      #JeelizVTOWidgetAdjustNotice {
+        width: 100%;
+        position: absolute;
+        background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.8) 100%);
+        color: white;
+        z-index: 20;
+        font-size: 16px;
+        bottom: 0;
+        padding: 40px 20px 20px;
+        display: none;
+        text-align: center;
+      }
+
+      .adjust-hint {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+
+      .adjust-hint i {
+        font-size: 24px;
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.7; transform: scale(1.1); }
+      }
+
+      /* 加载动画 */
+      #JeelizVTOWidgetLoading {
+        position: fixed;
+        z-index: 1000;
+        cursor: wait;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(15, 23, 42, 0.9);
+        backdrop-filter: blur(10px);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .loader {
+        width: 60px;
+        height: 60px;
+        border: 4px solid var(--glass-border);
+        border-top-color: var(--accent);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 24px;
+      }
+
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+
+      .loading-text {
+        color: white;
+        font-size: 18px;
+        font-weight: 500;
+        letter-spacing: 2px;
+      }
+
+      .loading-sub {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 14px;
+        margin-top: 8px;
+      }
+
+      /* 隐藏默认控件 */
+      #JeelizVTOWidgetAdjust,
+      #JeelizVTOWidgetChangeModelContainer,
+      #buttonResizeCanvas {
+        display: none;
+      }
+
+      /* 响应式 */
+      @media (max-width: 640px) {
+        .header {
+          height: 56px;
+        }
+        
+        .brand-name {
+          font-size: 1.2rem;
+        }
+        
+        .brand-tag {
+          display: none;
+        }
+
+        .controls-top {
+          top: 12px;
+          left: 8px;
+          right: 8px;
+        }
+
+        .controls-bottom {
+          bottom: 12px;
+          left: 8px;
+          right: 8px;
+        }
+
+        .btn {
+          padding: 10px 14px;
+          font-size: 13px;
+        }
+
+        .model-btn {
+          min-width: 70px;
+          padding: 8px 12px;
+        }
+      }
+    </style>
+
+    <script>
+      let _currentModel = 1;
+
+      function get_initialSKU() {
+        const queryString = window.location.search;
+        const URLParams = new URLSearchParams(queryString);
+        const sku = URLParams.get('sku') || 'rayban_aviator_or_vertFlash';
+        console.log('初始化SKU =', sku);
+        return sku;
+      }
+
+      function get_isShadow() {
+        const queryString = window.location.search;
+        const URLParams = new URLSearchParams(queryString);
+        return URLParams.get('isHideShadow') ? false : true;
+      }
+
+      function switchModel(modelNum, sku) {
+        _currentModel = modelNum;
+        JEELIZVTOWIDGET.load(sku);
+        
+        // 更新按钮状态
+        document.querySelectorAll('.model-btn').forEach((btn, index) => {
+          btn.classList.toggle('active', index + 1 === modelNum);
+        });
+      }
+
+      function enterAdjustMode() {
+        JEELIZVTOWIDGET.enter_adjustMode();
+        document.getElementById('JeelizVTOWidgetAdjustNotice').style.display = 'block';
+        document.querySelector('.controls-top').style.display = 'none';
+        document.querySelector('.controls-bottom').style.display = 'none';
+      }
+
+      function exitAdjustMode() {
+        JEELIZVTOWIDGET.exit_adjustMode();
+        document.getElementById('JeelizVTOWidgetAdjustNotice').style.display = 'none';
+        document.querySelector('.controls-top').style.display = 'flex';
+        document.querySelector('.controls-bottom').style.display = 'flex';
+      }
+
+      function load_modelBySKU() {
+        const sku = prompt('请输入眼镜型号 SKU:', 'rayban_wayfarer_havane_marron');
+        if (sku) {
+          JEELIZVTOWIDGET.load(sku);
+        }
+      }
+
+      // 主入口
+      function main() {
+        JEELIZVTOWIDGET.start({
+          isShadow: get_isShadow(),
+          sku: get_initialSKU(),
+          searchImageMask: 'images/target512.jpg',
+          searchImageColor: 0xf59e0b,
+          callbackReady: function() {
+            console.log('贝塔眼镜试戴组件已就绪 ✨');
+            
+            // 设置初始激活状态
+            document.querySelector('.model-btn').classList.add('active');
+          },
+          onError: function(errorLabel) {
+            let message = '发生错误';
+            switch(errorLabel) {
+              case 'WEBCAM_UNAVAILABLE':
+                message = '无法访问摄像头，请检查权限设置';
+                break;
+              case 'INVALID_SKU':
+                message = '无效的眼镜型号';
+                break;
+              case 'PLACEHOLDER_NULL_WIDTH':
+              case 'PLACEHOLDER_NULL_HEIGHT':
+                message = '界面加载异常，请刷新页面';
+                break;
+              case 'FATAL':
+              default:
+                message = '系统错误，请稍后重试';
+                break;
+            }
+            alert(message);
+          }
+        });
+      }
+
+      window.addEventListener('load', main);
+    </script>
+  </head>
+
+  <body>
+    <div class='app-container'>
+
+      <!-- 头部 -->
+      <header class='header'>
+        <div class="header-content">
+          <div class="logo">
+            <i class="fas fa-glasses"></i>
+          </div>
+          <span class="brand-name">贝塔眼镜</span>
+          <span class="brand-tag">AR试戴</span>
+        </div>
+      </header>
+
+      <!-- 试戴区域 -->
+      <div id='JeelizVTOWidget'>
+        <canvas id='JeelizVTOWidgetCanvas'></canvas>
+        
+        <!-- 顶部控制栏 -->
+        <div class='controls-top'>
+          <button class='btn btn-primary' onclick='enterAdjustMode()'>
+            <i class="fas fa-arrows-alt"></i>
+            <span>调整位置</span>
+          </button>
+          <button class='btn' onclick='load_modelBySKU()'>
+            <i class="fas fa-search"></i>
+            <span>搜索型号</span>
+          </button>
+        </div>
+
+        <!-- 底部模型选择 -->
+        <div class='controls-bottom'>
+          <button class='btn model-btn' onclick="switchModel(1, 'rayban_aviator_or_vertFlash')">
+            款式一
+          </button>
+          <button class='btn model-btn' onclick="switchModel(2, 'rayban_round_cuivre_pinkBrownDegrade')">
+            款式二
+          </button>
+          <button class='btn model-btn' onclick="switchModel(3, 'carrera_113S_blue')">
+            款式三
+          </button>
+        </div>
+
+        <!-- 隐藏的原生控件（保留ID兼容性） -->
+        <button id='JeelizVTOWidgetAdjust'></button>
+        <div id='JeelizVTOWidgetChangeModelContainer'></div>
+        <button id='buttonResizeCanvas'></button>
+
+        <!-- 调整模式提示 -->
+        <div id='JeelizVTOWidgetAdjustNotice'>
+          <div class="adjust-hint">
+            <i class="fas fa-hand-pointer"></i>
+            <span>拖动眼镜调整位置</span>
+          </div>
+          <button class='btn btn-accent' onclick='exitAdjustMode()'>
+            <i class="fas fa-check"></i>
+            完成调整
+          </button>
+        </div>
+
+        <!-- 加载动画 -->
+        <div id='JeelizVTOWidgetLoading'>
+          <div class="loader"></div>
+          <div class='loading-text'>正在加载</div>
+          <div class='loading-sub'>贝塔科技 · AR虚拟试戴</div>
+        </div>
+
+      </div>
+    </div>
+  </body>
+</html>

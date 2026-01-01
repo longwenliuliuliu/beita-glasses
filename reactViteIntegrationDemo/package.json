@@ -1,0 +1,38 @@
+{
+  "name": "beita-glasses-vto-demo",
+  "version": "1.0.0",
+  "description": "贝塔眼镜 AR虚拟试戴 React + Vite 演示项目",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0"
+  },
+  "dependencies": {
+    "jeelizvtowidget": "^4.9.7",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "eslint": "^9.15.0",
+    "eslint-plugin-react": "^7.37.2",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "eslint-plugin-react-refresh": "^0.4.14",
+    "vite": "^6.0.1"
+  },
+  "keywords": [
+    "AR",
+    "virtual-try-on",
+    "glasses",
+    "眼镜",
+    "虚拟试戴",
+    "贝塔科技"
+  ],
+  "author": "贝塔科技 <contact@beita.tech>",
+  "license": "MIT"
+}

@@ -1,0 +1,292 @@
+/**
+ * 贝塔眼镜 - AR虚拟试戴组件样式
+ * Beta Glasses VTO Widget Stylesheet
+ * 
+ * 贝塔科技 © 2026
+ */
+
+:root {
+  --beta-primary: #2563eb;
+  --beta-primary-dark: #1d4ed8;
+  --beta-accent: #f59e0b;
+  --beta-accent-hover: #f97316;
+  --beta-bg-dark: #0f172a;
+  --beta-glass-bg: rgba(255, 255, 255, 0.1);
+  --beta-glass-border: rgba(255, 255, 255, 0.2);
+  --beta-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  --beta-radius: 16px;
+  --beta-radius-sm: 12px;
+}
+
+* {
+  margin: 0;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  overflow: hidden;
+  background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 50%, #1e40af 100%);
+  text-align: center;
+  font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  margin: 0;
+  padding: 0;
+  color: white;
+  box-sizing: border-box;
+}
+
+/* 按钮基础样式 */
+button, select {
+  cursor: pointer;
+  background: var(--beta-glass-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: white;
+  font-weight: 500;
+  font-size: 14px;
+  padding: 12px 20px;
+  min-width: 120px;
+  border: 1px solid var(--beta-glass-border);
+  border-radius: var(--beta-radius-sm);
+  margin: 0;
+  transition: all 0.3s ease;
+  -webkit-appearance: none;
+}
+
+button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+  box-shadow: var(--beta-shadow);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+/* 主容器 */
+.content {
+  height: 100%;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 头部 */
+.header {
+  width: 100%;
+  height: 64px;
+  background: var(--beta-glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--beta-glass-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.headerTitle {
+  font-size: 1.5rem;
+  font-family: 'Noto Sans SC', sans-serif;
+  font-weight: 700;
+  background: linear-gradient(90deg, #fff 0%, #e0e7ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 2px;
+}
+
+/* 试戴区域 */
+#JeelizVTOWidget {
+  flex-grow: 1;
+  width: 100%;
+  max-width: min(calc(100vh - 64px), 800px);
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+  border-radius: var(--beta-radius);
+  overflow: hidden;
+}
+
+#JeelizVTOWidgetCanvas {
+  position: absolute;
+  z-index: 1;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  border-radius: var(--beta-radius);
+}
+
+/* 控制栏 */
+.JeelizVTOWidgetControls {
+  position: absolute;
+  z-index: 10;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  padding: 0 16px;
+}
+
+.buttonIcon {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 8px;
+}
+
+.JeelizVTOWidgetControlsTop {
+  top: 16px;
+}
+
+.JeelizVTOWidgetControlsTop > button {
+  width: auto;
+  min-width: auto;
+  padding: 12px 24px;
+}
+
+#JeelizVTOWidgetChangeModelContainer {
+  bottom: 16px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+#JeelizVTOWidgetChangeModelContainer > button {
+  width: auto;
+  min-width: 90px;
+  padding: 10px 16px;
+  font-size: 13px;
+}
+
+#JeelizVTOWidgetChangeModelContainer > button:nth-child(1) {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border: none;
+}
+
+#JeelizVTOWidgetChangeModelContainer > button:nth-child(2) {
+  background: linear-gradient(135deg, var(--beta-primary) 0%, var(--beta-primary-dark) 100%);
+  border: none;
+}
+
+#JeelizVTOWidgetChangeModelContainer > button:nth-child(3) {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  border: none;
+}
+
+/* 加载动画 */
+#JeelizVTOWidgetLoading {
+  position: fixed;
+  z-index: 1000;
+  cursor: wait;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.JeelizVTOWidgetLoadingText {
+  color: white;
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: 4px;
+}
+
+.JeelizVTOWidgetLoadingText::before {
+  content: '';
+  display: block;
+  width: 50px;
+  height: 50px;
+  border: 3px solid var(--beta-glass-border);
+  border-top-color: var(--beta-accent);
+  border-radius: 50%;
+  animation: betaSpin 1s linear infinite;
+  margin: 0 auto 24px;
+}
+
+@keyframes betaSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 调整模式 */
+#JeelizVTOWidgetAdjustNotice {
+  width: 100%;
+  position: absolute;
+  background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.85) 100%);
+  color: white;
+  z-index: 20;
+  font-size: 16px;
+  bottom: 0;
+  justify-content: center;
+  padding: 48px 20px 24px;
+  display: none;
+  text-align: center;
+}
+
+#JeelizVTOWidgetAdjustExit {
+  background: linear-gradient(135deg, var(--beta-accent) 0%, var(--beta-accent-hover) 100%);
+  color: var(--beta-bg-dark);
+  border: none;
+  font-weight: 600;
+  position: static;
+  margin-top: 16px;
+}
+
+#JeelizVTOWidgetAdjustExit:hover {
+  background: linear-gradient(135deg, var(--beta-accent-hover) 0%, #ea580c 100%);
+}
+
+/* 隐藏默认控件 - 由JS控制显示 */
+#JeelizVTOWidgetAdjust {
+  display: none;
+}
+
+#JeelizVTOWidgetChangeModelContainer {
+  display: none;
+}
+
+#buttonResizeCanvas {
+  display: none;
+}
+
+/* 响应式设计 */
+@media (max-width: 640px) {
+  .header {
+    height: 56px;
+  }
+
+  .headerTitle {
+    font-size: 1.2rem;
+  }
+
+  #JeelizVTOWidget {
+    max-width: calc(100vh - 56px);
+  }
+
+  button {
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+
+  .JeelizVTOWidgetControlsTop {
+    top: 12px;
+  }
+
+  #JeelizVTOWidgetChangeModelContainer {
+    bottom: 12px;
+  }
+
+  #JeelizVTOWidgetChangeModelContainer > button {
+    min-width: 70px;
+    padding: 8px 12px;
+  }
+}
