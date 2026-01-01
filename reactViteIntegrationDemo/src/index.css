@@ -1,6 +1,6 @@
-/**
- * 贝塔眼镜 - AR虚拟试戴样式
- * Beta Glasses VTO Styles
+/* 
+ * 贝塔眼镜 - AR虚拟试戴组件样式
+ * Beta Glasses VTO Widget Styles
  * 贝塔科技 © 2026
  */
 
@@ -13,15 +13,14 @@
   --accent: #f59e0b;
   --accent-hover: #f97316;
   --success: #10b981;
-  --error: #ef4444;
+  --purple: #8b5cf6;
   --bg-dark: #0f172a;
   --bg-gradient: linear-gradient(135deg, #1e3a8a 0%, #3730a3 50%, #1e40af 100%);
   --glass-bg: rgba(255, 255, 255, 0.1);
-  --glass-bg-hover: rgba(255, 255, 255, 0.15);
+  --glass-bg-hover: rgba(255, 255, 255, 0.2);
   --glass-border: rgba(255, 255, 255, 0.2);
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
   --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-  --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.4);
+  --shadow-sm: 0 4px 16px rgba(0, 0, 0, 0.2);
   --radius: 16px;
   --radius-sm: 12px;
   --radius-xs: 8px;
@@ -35,97 +34,32 @@
 }
 
 html, body, #root {
-  height: 100%;
   width: 100%;
+  height: 100%;
+  overflow: hidden;
 }
 
 body {
   font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   background: var(--bg-gradient);
   color: white;
-  overflow: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* App Container */
 .app {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
   width: 100%;
+  height: 100%;
 }
 
-.app.fullscreen {
-  background: #000;
-}
-
-.app-main {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-}
-
-/* Header */
-.app-header {
-  height: 64px;
-  background: var(--glass-bg);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--glass-border);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.header-content {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.logo {
-  width: 40px;
-  height: 40px;
-  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
-  border-radius: var(--radius-sm);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--bg-dark);
-  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
-}
-
-.brand-title {
-  font-size: 1.5rem;
-  font-weight: 700;
-  background: linear-gradient(90deg, #fff 0%, #e0e7ff 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  letter-spacing: 2px;
-}
-
-.brand-badge {
-  font-size: 0.75rem;
-  padding: 4px 10px;
-  background: var(--accent);
-  color: var(--bg-dark);
-  border-radius: 20px;
-  font-weight: 600;
-}
-
-/* VTO Container */
+/* 试戴容器 */
 .vto-container {
-  width: 100%;
-  height: 100%;
-  max-width: min(100vh, 800px);
-  max-height: 100%;
+  width: 100vw;
+  height: 100vh;
+  max-width: 100vh;
+  max-height: 100vw;
+  margin: 0 auto;
   position: relative;
-  border-radius: var(--radius);
   overflow: hidden;
 }
 
@@ -135,20 +69,20 @@ body {
   left: 0;
   right: 0;
   margin: 0 auto;
-  border-radius: var(--radius);
 }
 
-/* Buttons */
+/* 按钮基础样式 */
 .btn {
   cursor: pointer;
   background: var(--glass-bg);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   color: white;
   font-family: inherit;
   font-weight: 500;
   font-size: 14px;
   padding: 12px 20px;
+  min-width: 100px;
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-sm);
   transition: var(--transition);
@@ -156,25 +90,32 @@ body {
   align-items: center;
   justify-content: center;
   gap: 8px;
+  user-select: none;
   white-space: nowrap;
 }
 
-.btn:hover {
+.btn:hover:not(:disabled) {
   background: var(--glass-bg-hover);
   transform: translateY(-2px);
   box-shadow: var(--shadow);
 }
 
-.btn:active {
+.btn:active:not(:disabled) {
   transform: translateY(0);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .btn-primary {
   background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
   border: none;
+  box-shadow: var(--shadow-sm);
 }
 
-.btn-primary:hover {
+.btn-primary:hover:not(:disabled) {
   background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
 }
 
@@ -185,81 +126,96 @@ body {
   font-weight: 600;
 }
 
-.btn-accent:hover {
+.btn-accent:hover:not(:disabled) {
   background: linear-gradient(135deg, var(--accent-hover) 0%, #ea580c 100%);
 }
 
-/* Model Button */
-.model-btn {
-  min-width: 90px;
-  font-size: 13px;
-  background: linear-gradient(135deg, var(--model-color, var(--primary)) 0%, color-mix(in srgb, var(--model-color, var(--primary)) 80%, black) 100%);
-  border: none;
-  opacity: 0.7;
-}
-
-.model-btn:hover,
-.model-btn.active {
-  opacity: 1;
-}
-
-.model-btn.active {
-  box-shadow: 0 0 0 2px white, var(--shadow);
-}
-
-/* Controls */
-.controls-top,
-.controls-bottom {
+/* 控制栏 */
+.controls-top {
   position: absolute;
   z-index: 10;
-  left: 16px;
-  right: 16px;
+  top: 16px;
+  left: 0;
+  right: 0;
   display: flex;
   justify-content: center;
   gap: 12px;
-  flex-wrap: wrap;
-}
-
-.controls-top {
-  top: 16px;
+  padding: 0 16px;
+  animation: fadeIn 0.5s ease;
 }
 
 .controls-bottom {
-  bottom: 16px;
-  gap: 8px;
+  position: absolute;
+  z-index: 10;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  padding: 0 16px;
+  flex-wrap: wrap;
+  animation: fadeIn 0.5s ease;
 }
 
-/* Adjust Overlay */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 模型按钮 */
+.model-btn {
+  background: linear-gradient(135deg, var(--model-color, var(--primary)) 0%, color-mix(in srgb, var(--model-color, var(--primary)) 80%, black) 100%);
+  border: none;
+  box-shadow: var(--shadow-sm);
+}
+
+.model-btn.active {
+  box-shadow: 0 0 0 3px white, var(--shadow);
+  transform: scale(1.05);
+}
+
+.model-btn:hover:not(:disabled) {
+  transform: translateY(-2px) scale(1.02);
+}
+
+.model-btn.active:hover:not(:disabled) {
+  transform: scale(1.05);
+}
+
+/* 调整模式覆盖层 */
 .adjust-overlay {
   position: absolute;
   z-index: 20;
   bottom: 0;
   left: 0;
   right: 0;
-  background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.85) 100%);
-  padding: 48px 20px 24px;
-  text-align: center;
-  animation: slideUp 0.3s ease-out;
+  background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.9) 100%);
+  padding: 60px 20px 30px;
+  animation: slideUp 0.3s ease;
 }
 
 @keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.adjust-content {
+  text-align: center;
 }
 
 .adjust-content p {
-  margin-bottom: 16px;
-  font-size: 15px;
-  opacity: 0.9;
+  margin-bottom: 20px;
+  font-size: 16px;
+  animation: pulse 2s ease-in-out infinite;
 }
 
-/* Loading Overlay */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* 加载覆盖层 */
 .loading-overlay {
   position: fixed;
   z-index: 1000;
@@ -267,29 +223,23 @@ body {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(15, 23, 42, 0.95);
+  background: rgba(15, 23, 42, 0.98);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  animation: fadeIn 0.3s ease-out;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  gap: 20px;
 }
 
 .loading-spinner {
-  width: 60px;
-  height: 60px;
-  border: 4px solid var(--glass-border);
+  width: 56px;
+  height: 56px;
+  border: 3px solid var(--glass-border);
   border-top-color: var(--accent);
   border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: 24px;
+  animation: spin 0.8s linear infinite;
 }
 
 @keyframes spin {
@@ -298,17 +248,17 @@ body {
 
 .loading-text {
   font-size: 18px;
-  font-weight: 500;
-  letter-spacing: 2px;
-  margin-bottom: 8px;
+  font-weight: 600;
+  letter-spacing: 3px;
 }
 
 .loading-sub {
-  font-size: 14px;
-  opacity: 0.6;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.5);
+  letter-spacing: 1px;
 }
 
-/* Error Overlay */
+/* 错误覆盖层 */
 .error-overlay {
   position: fixed;
   z-index: 1000;
@@ -316,7 +266,7 @@ body {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(15, 23, 42, 0.95);
+  background: rgba(15, 23, 42, 0.98);
   backdrop-filter: blur(20px);
   display: flex;
   align-items: center;
@@ -325,94 +275,69 @@ body {
 
 .error-content {
   text-align: center;
-  padding: 32px;
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  border-radius: var(--radius);
-  max-width: 400px;
+  padding: 40px;
 }
 
 .error-icon {
   font-size: 48px;
   display: block;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 
 .error-content p {
-  margin-bottom: 24px;
   font-size: 16px;
-  line-height: 1.5;
+  margin-bottom: 24px;
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .error-content button {
-  background: var(--error);
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
   color: white;
   border: none;
-  padding: 12px 24px;
+  padding: 14px 32px;
   border-radius: var(--radius-sm);
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 15px;
+  font-weight: 600;
   cursor: pointer;
   transition: var(--transition);
 }
 
 .error-content button:hover {
-  background: #dc2626;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
 }
 
-/* Responsive */
+/* 响应式 */
 @media (max-width: 640px) {
-  .app-header {
-    height: 56px;
-  }
-
-  .brand-title {
-    font-size: 1.2rem;
-  }
-
-  .brand-badge {
-    display: none;
-  }
-
   .btn {
-    padding: 10px 16px;
-    font-size: 13px;
-  }
-
-  .model-btn {
+    padding: 10px 14px;
     min-width: 80px;
-    padding: 8px 12px;
-  }
-
-  .controls-top,
-  .controls-bottom {
-    left: 8px;
-    right: 8px;
+    font-size: 13px;
   }
 
   .controls-top {
     top: 12px;
+    gap: 8px;
   }
 
   .controls-bottom {
     bottom: 12px;
+    gap: 6px;
+  }
+
+  .model-btn {
+    min-width: 90px;
+    padding: 10px 14px;
+    font-size: 12px;
   }
 }
 
-/* Legacy class compatibility */
-.JeelizVTOWidget,
-.BetaVTOWidget {
-  width: 100%;
-  height: 100%;
-  max-width: min(100vh, 800px);
-  position: relative;
-}
-
-.JeelizVTOWidgetCanvas,
-.BetaVTOWidgetCanvas {
-  position: absolute;
-  z-index: 1;
-  left: 0;
-  right: 0;
-  margin: 0 auto;
+@media (max-width: 380px) {
+  .btn span:first-child {
+    display: none;
+  }
+  
+  .controls-top .btn:last-child {
+    display: none;
+  }
 }

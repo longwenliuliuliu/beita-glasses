@@ -1,5 +1,4 @@
 import { useState, useCallback } from 'react'
-import Header from './components/Header'
 import AppCanvas from './components/AppCanvas'
 
 function App() {
@@ -7,21 +6,23 @@ function App() {
 
   const toggleFullscreen = useCallback(() => {
     if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen()
-      setIsFullscreen(true)
+      document.documentElement.requestFullscreen().then(() => {
+        setIsFullscreen(true)
+      }).catch(console.error)
     } else {
-      document.exitFullscreen()
-      setIsFullscreen(false)
+      document.exitFullscreen().then(() => {
+        setIsFullscreen(false)
+      }).catch(console.error)
     }
   }, [])
 
   return (
-    <div className={`app ${isFullscreen ? 'fullscreen' : ''}`}>
-      {!isFullscreen && <Header />}
-      <main className="app-main">
-        <AppCanvas onToggleFullscreen={toggleFullscreen} isFullscreen={isFullscreen} />
-      </main>
-    </div>
+    <main className="app">
+      <AppCanvas 
+        onToggleFullscreen={toggleFullscreen}
+        isFullscreen={isFullscreen}
+      />
+    </main>
   )
 }
 
