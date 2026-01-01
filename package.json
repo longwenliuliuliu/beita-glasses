@@ -1,0 +1,39 @@
+{
+  "name": "beita-glasses-ar-vto",
+  "version": "1.0.0",
+  "description": "贝塔眼镜 AR虚拟试戴平台 - 贝塔科技",
+  "type": "module",
+  "scripts": {
+    "dev": "cd reactViteIntegrationDemo && npm run dev",
+    "build": "cd reactViteIntegrationDemo && npm run build",
+    "preview": "cd reactViteIntegrationDemo && npm run preview",
+    "install:demo": "cd reactViteIntegrationDemo && npm install",
+    "serve": "npx serve ."
+  },
+  "keywords": [
+    "AR",
+    "augmented-reality",
+    "virtual-try-on",
+    "glasses",
+    "eyewear",
+    "webgl",
+    "3d",
+    "眼镜",
+    "虚拟试戴",
+    "增强现实",
+    "贝塔科技"
+  ],
+  "author": "贝塔科技 <contact@beita.tech>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "homepage": "",
+  "bugs": {
+    "url": ""
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
